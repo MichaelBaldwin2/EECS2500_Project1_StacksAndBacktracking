@@ -10,11 +10,7 @@ public class Person {
 	public Person(BufferedReader reader) throws IOException {
 		String tempName = reader.readLine();
 		String prefString = reader.readLine();
-		this(tempName, prefString);
-	}
 
-	public Person(String name, String prefString) {
-		this.name = name;
 		List<String> tempPrefList = Arrays.asList(prefString.split(" "));
 		Collections.reverse(tempPrefList); //We need to reverse the list so that the most preferred match is at the top of the stack
 		for (String iPref : tempPrefList) {
