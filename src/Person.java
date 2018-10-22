@@ -48,7 +48,7 @@ public class Person {
 
 		String prefString = reader.readLine();
 		String[] tempPrefList = prefString.split("\t");
-		if(tempPrefList.length <= 1)
+		if (tempPrefList.length <= 1)
 			tempPrefList = prefString.split(" ");
 
 		for (String iPref : tempPrefList) {
@@ -59,20 +59,21 @@ public class Person {
 		}
 	}
 
-	public void convertAndSortPrefs(List<Person> otherGroupNames)
-	{
-		for(int i = 0; i < otherGroupNames.size(); i++) {
+	public void convertAndSortPrefs(List<Person> otherGroupNames) {
+		for (int i = 0; i < otherGroupNames.size(); i++) {
 			sortedPrefs.set(prefValues.get(i), otherGroupNames.get(i));
 		}
-
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public Person getNextPref()
-	{
+	public Person getCurrentFiance() {
+		return currentFiance;
+	}
+
+	public Person getNextPref() {
 		return sortedPrefs.get(sortedPrefIndex++);
 	}
 
@@ -83,5 +84,19 @@ public class Person {
 	 */
 	public boolean isPaired() {
 		return currentFiance != null;
+	}
+
+	public boolean isPreferredOver(Person person) {
+		if (!isPaired()) //If this person is currently unattached then they definitely prefer the parameter person
+			return true;
+		if (sortedPrefs.indexOf(person) < sortedPrefs.indexOf(currentFiance))
+			return true;
+		return false;
+	}
+
+	public void pairWith(Person person) {
+		if (isPaired())
+			currentFiance.currentFiance = null;
+		currentFiance = person;
 	}
 }

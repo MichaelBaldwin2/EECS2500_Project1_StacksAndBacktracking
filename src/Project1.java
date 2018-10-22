@@ -5,7 +5,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
-
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +34,9 @@ public class Project1 {
 		}
 
 		//Now convert each value to a name and sort them per person
-		for(Person iPerson : groupA)
+		for (Person iPerson : groupA)
 			iPerson.convertAndSortPrefs(groupB);
-		for(Person iPerson : groupB)
+		for (Person iPerson : groupB)
 			iPerson.convertAndSortPrefs(groupA);
 
 		//Now on to the actual algorithm
@@ -45,13 +44,17 @@ public class Project1 {
 			for (Person iPerson : groupA) {
 				if (!iPerson.isPaired()) {
 					Person nextPref = iPerson.getNextPref();
-					if (nextPref.isMoreAggreeable(index)) {
+					if (nextPref.isPreferredOver(nextPref)) {
 						iPerson.pairWith(nextPref);
 						nextPref.pairWith(iPerson);
 					}
 				}
 			}
 		}//*/
+
+		for (Person iPerson : groupA) {
+			System.out.println(iPerson.getName() + " - " + iPerson.getCurrentFiance().getName());
+		}
 	}
 
 	private static boolean areMarriagesStable() {
