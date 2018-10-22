@@ -4,24 +4,24 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 public class Project1 {
 	public static void main(String[] args) {
 		//First we load the file, initialize the stacks, and build the lists
+		String testDataFilePath = System.getProperty("user.dir") + "/Project1TestData.txt";
 		List<Person> groupA = new ArrayList<>();
 		List<Person> groupB = new ArrayList<>();
-		Stack<Pairing> pairings = new Stack<>();
-		int numInGroup = 0;
-		String testDataFilePath = System.getenv("user.dir") + "/Project1TestData.txt";
 
 		try (BufferedReader reader = Files.newBufferedReader(Paths.get(testDataFilePath))) {
-			if (reader.ready())
-				numInGroup = Integer.parseInt(reader.readLine());
-			int i = 0;
-			while(reader.ready()) {
-				Person person = new Person(reader);
-			}
+			int groupSize = Integer.parseInt(reader.readLine());
+			for (int i = 0; i < 2; i++) //Loop over both groups
+				for (int j = 0; j < groupSize; j++) { //Loop over each member in the group
+					Person person = new Person(reader, groupSize);
+					if (i == 0) //If we are currently in the first outer loop iteration, add to groupA, else add to groupB
+						groupA.add(person);
+					else
+						groupB.add(person);
+				}
 
 		} catch (IOException exc) {
 			System.out.println("IOException encountered: " + exc);
