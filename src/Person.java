@@ -21,11 +21,18 @@ public class Person {
 	 * The list of preference values of possible spouses, where 0 is the highest preference, and 3 is the lowest.
 	 */
 	private List<Integer> prefValues;
-	private List<String> sortedPrefs;
 	/**
-	 * The index of the person this person is currently paired with.
+	 * List of preferences as People instances.
 	 */
-	private int pairedWithIndex;
+	private List<Person> sortedPrefs;
+	/**
+	 * The person this person is currently paired with.
+	 */
+	private Person currentFiance;
+	/**
+	 * The current index of the sorted preferences that we are attempting to 'woo'
+	 */
+	private int sortedPrefIndex;
 
 	/**
 	 * Create a new person from the test data file.
@@ -37,19 +44,26 @@ public class Person {
 	public Person(BufferedReader reader, int groupSize) throws IOException {
 		name = reader.readLine();
 		prefValues = new ArrayList<>(groupSize);
+		sortedPrefs = new ArrayList<>(groupSize);
 
 		String prefString = reader.readLine();
 		String[] tempPrefList = prefString.split("\t");
+		if(tempPrefList.length <= 1)
+			tempPrefList = prefString.split(" ");
+
 		for (String iPref : tempPrefList) {
 			int value = Integer.parseInt(iPref);
 			int clampedValue = value < 0 ? 0 : value >= groupSize ? groupSize - 1 : value; //I clamp the value to account for the value of '4' in the TestData
 			prefValues.add(clampedValue);
+			sortedPrefs.add(null);
 		}
 	}
 
-	public void convertAndSortPrefs(List<String> otherGroupNames)
+	public void convertAndSortPrefs(List<Person> otherGroupNames)
 	{
-		sortedPrefs = new ArrayList<>(otherGroupNames.size());
+		for(int i = 0; i < otherGroupNames.size(); i++) {
+			sortedPrefs.set(prefValues.get(i), otherGroupNames.get(i));
+		}
 
 	}
 
@@ -57,22 +71,9 @@ public class Person {
 		return name;
 	}
 
-	/**
-	 * Gets the value of a specific partner at a specified index position.
-	 *
-	 * @param index The index position of the preference value to get.
-	 * @return The preference value.
-	 */
-	public int getPrefValue(int index) {
-		//I don't check if the parameter 'index' is within bounds because all I would do is throw an IndexOutOfBoundsException, which list.get(~) does anyways.
-		return prefValues.get(index);
-	}
-
-	public int getIndexOfPrefValue(int value) {
-		for (int i = 0; i < prefValues.size(); i++)
-			if (prefValues.get(i) == value)
-				return i;
-		return -1;
+	public Person getNextPref()
+	{
+		return sortedPrefs.get(sortedPrefIndex++);
 	}
 
 	/**
@@ -81,6 +82,6 @@ public class Person {
 	 * @return True if paired, false otherwise.
 	 */
 	public boolean isPaired() {
-		return pairedWithIndex != -1;
+		return currentFiance != null;
 	}
 }
