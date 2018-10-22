@@ -1,3 +1,7 @@
+/*
+  Written by: Michael Baldwin
+ */
+
 import java.util.*;
 
 public class Stack<T> {
