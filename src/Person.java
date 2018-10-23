@@ -24,7 +24,7 @@ public class Person {
 	/**
 	 * List of preferences as People instances.
 	 */
-	private List<Person> sortedPrefs;
+	private ArrayList<Person> sortedPrefs;
 	/**
 	 * The person this person is currently paired with.
 	 */
@@ -126,5 +126,10 @@ public class Person {
 		if (isPaired())
 			currentFiance.currentFiance = null;
 		currentFiance = person;
+	}
+
+	public void resetPairingAndPrefPos() {
+		pairWith(null); //This removed any current pairing
+		sortedPrefIndex = 0;
 	}
 }

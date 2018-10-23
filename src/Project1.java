@@ -16,6 +16,15 @@ public class Project1 {
 	 */
 	private static String testDataFilePath = System.getProperty("user.dir") + "/Project1TestData.txt";
 	/**
+	 * Should the code run the Gale-Shapely Algorithm, or the BackTracking solution?
+	 * They might present different stable pairs, if two exist.
+	 */
+	private static boolean useBackTracking = true;
+	/**
+	 * The size of a single group.
+	 */
+	private static int groupSize;
+	/**
 	 * The first group of people that are to paired to the second group.
 	 */
 	private static List<Person> groupA = new ArrayList<>();
@@ -54,18 +63,26 @@ public class Project1 {
 		for (Person iPerson : groupB)
 			iPerson.convertAndSort(groupA);
 
-		//Now on to the actual algorithm
-		while (!areMarriagesStable()) {
-			for (Person iPerson : groupA) {
-				if (!iPerson.isPaired()) {
-					Person nextPref = iPerson.getNextPref();
-					if (nextPref.isPreferredOver(iPerson)) {
-						iPerson.pairWith(nextPref);
-						nextPref.pairWith(iPerson);
+		//Now on to the actual algorithm(s)
+		if (useBackTracking) {
+			while (!areMarriagesStable()) {
+				for(int i = 0; i < groupA.size(); i++) {
+
+				}
+			}
+		} else {
+			while (!areMarriagesStable()) {
+				for (Person iPerson : groupA) {
+					if (!iPerson.isPaired()) {
+						Person nextPref = iPerson.getNextPref();
+						if (nextPref.isPreferredOver(iPerson)) {
+							iPerson.pairWith(nextPref);
+							nextPref.pairWith(iPerson);
+						}
 					}
 				}
 			}
-		}//*/
+		}
 
 		for (Person iPerson : groupA) {
 			System.out.println(iPerson.getName() + " - " + iPerson.getCurrentFiance().getName());
