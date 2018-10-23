@@ -11,9 +11,8 @@ public class Stack<T> {
 		data.add(obj);
 	}
 
-	public T pop()
-	{
-		if(isEmpty())
+	public T pop() {
+		if (isEmpty())
 			return null;
 		int lastIndex = data.size() - 1;
 		T obj = data.get(lastIndex);

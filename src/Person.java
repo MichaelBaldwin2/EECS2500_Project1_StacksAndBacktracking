@@ -46,6 +46,8 @@ public class Person {
 		prefValues = new ArrayList<>(groupSize);
 		sortedPrefs = new ArrayList<>(groupSize);
 
+		//Read and split the preferences at each 'tab' character.
+		//If that doesn't work, split at spaces (which shouldn't work, unless TestData has been updated)
 		String prefString = reader.readLine();
 		String[] tempPrefList = prefString.split("\t");
 		if (tempPrefList.length <= 1)
@@ -53,26 +55,43 @@ public class Person {
 
 		for (String iPref : tempPrefList) {
 			int value = Integer.parseInt(iPref);
-			int clampedValue = value < 0 ? 0 : value >= groupSize ? groupSize - 1 : value; //I clamp the value to account for the value of '4' in the TestData
+			int clampedValue = value < 0 ? 0 : value >= groupSize ? groupSize - 1 : value; //Clamp the value to account for the value of '4' in the TestData
 			prefValues.add(clampedValue);
 			sortedPrefs.add(null);
 		}
 	}
 
-	public void convertAndSortPrefs(List<Person> otherGroupNames) {
-		for (int i = 0; i < otherGroupNames.size(); i++) {
-			sortedPrefs.set(prefValues.get(i), otherGroupNames.get(i));
+	/**
+	 * This method will convert all the preference values to actual Person objects,
+	 * and will also set them in the correct order, with highest preference first.
+	 *
+	 * @param otherGroup The list of Persons in the other group.
+	 */
+	public void convertAndSort(List<Person> otherGroup) {
+		for (int i = 0; i < otherGroup.size(); i++) {
+			sortedPrefs.set(prefValues.get(i), otherGroup.get(i));
 		}
 	}
 
+	/**
+	 * @return The name of this person.
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * @return The current fiance, or null if there is none.
+	 */
 	public Person getCurrentFiance() {
 		return currentFiance;
 	}
 
+	/**
+	 * This method will return the next preferred Person to match with and will increment the index counter by 1.
+	 *
+	 * @return The next preferred Person.
+	 */
 	public Person getNextPref() {
 		return sortedPrefs.get(sortedPrefIndex++);
 	}
@@ -86,14 +105,23 @@ public class Person {
 		return currentFiance != null;
 	}
 
+	/**
+	 * Checks if the supplied Person is a preferred match over their current partner (if there is one).
+	 *
+	 * @param person The person to check against.
+	 * @return True if this new person is a better match, or false otherwise.
+	 */
 	public boolean isPreferredOver(Person person) {
-		if (!isPaired()) //If this person is currently unattached then they definitely prefer the parameter person
+		if (!isPaired()) //If this person is currently unattached then they definitely prefer the proposed person
 			return true;
-		if (sortedPrefs.indexOf(person) < sortedPrefs.indexOf(currentFiance))
-			return true;
-		return false;
+		return sortedPrefs.indexOf(person) < sortedPrefs.indexOf(currentFiance);
 	}
 
+	/**
+	 * This method will pair this Person with the supplied Person. It will break any match between this person and their previous partner.
+	 *
+	 * @param person The new Person to match with.
+	 */
 	public void pairWith(Person person) {
 		if (isPaired())
 			currentFiance.currentFiance = null;
