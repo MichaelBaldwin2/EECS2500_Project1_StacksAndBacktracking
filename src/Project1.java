@@ -37,7 +37,7 @@ public class Project1 {
 	 * Only used when attempting backtracking,
 	 * not used for the Gale-Shapely algorithm.
 	 */
-	private static Stack<Person> engagements = new Stack<>();
+	private static Stack<Pairing> pairings = new Stack<>();
 
 	/**
 	 * The main method. File loading, data creation, algorithm running, and solution outputting are all performed here.
@@ -65,9 +65,15 @@ public class Project1 {
 
 		//Now on to the actual algorithm(s)
 		if (useBackTracking) {
-			while (!areMarriagesStable()) {
-				for(int i = 0; i < groupA.size(); i++) {
-
+			//First thing we do is push the first pairing of (a0, b0)
+			pairings.push(new Pairing(groupA.get(0), groupB.get(0))); //The stack now has only one pairing in it
+			for (Person iPerson : groupA) {
+				for(Person iPref : iPerson) {
+					if (iPref.preferresThisOverCurrent(iPerson)) {
+						if (iPref.isPaired()) {
+						}
+					} else {
+					}
 				}
 			}
 		} else {
@@ -75,17 +81,17 @@ public class Project1 {
 				for (Person iPerson : groupA) {
 					if (!iPerson.isPaired()) {
 						Person nextPref = iPerson.getNextPref();
-						if (nextPref.isPreferredOver(iPerson)) {
+						if (nextPref.preferresThisOverCurrent(iPerson)) {
 							iPerson.pairWith(nextPref);
 							nextPref.pairWith(iPerson);
 						}
 					}
 				}
 			}
-		}
 
-		for (Person iPerson : groupA) {
-			System.out.println(iPerson.getName() + " - " + iPerson.getCurrentFiance().getName());
+			for (Person iPerson : groupA) {
+				System.out.println(iPerson.getName() + " - " + iPerson.getCurrentFiance().getName());
+			}
 		}
 	}
 

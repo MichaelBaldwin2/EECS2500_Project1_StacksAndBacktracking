@@ -5,14 +5,16 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * The Person class represents a single marry-able person.
  * It contains their name, preference values based upon the index locations of possible spouses,
  * and some helper functionality.
  */
-public class Person {
+public class Person implements Iterable<Person> {
 	/**
 	 * The name of this person.
 	 */
@@ -29,10 +31,6 @@ public class Person {
 	 * The person this person is currently paired with.
 	 */
 	private Person currentFiance;
-	/**
-	 * The current index of the sorted preferences that we are attempting to 'woo'
-	 */
-	private int sortedPrefIndex;
 
 	/**
 	 * Create a new person from the test data file.
@@ -88,15 +86,6 @@ public class Person {
 	}
 
 	/**
-	 * This method will return the next preferred Person to match with and will increment the index counter by 1.
-	 *
-	 * @return The next preferred Person.
-	 */
-	public Person getNextPref() {
-		return sortedPrefs.get(sortedPrefIndex++);
-	}
-
-	/**
 	 * Is this person currently paired.
 	 *
 	 * @return True if paired, false otherwise.
@@ -111,7 +100,7 @@ public class Person {
 	 * @param person The person to check against.
 	 * @return True if this new person is a better match, or false otherwise.
 	 */
-	public boolean isPreferredOver(Person person) {
+	public boolean preferresThisOverCurrent(Person person) {
 		if (!isPaired()) //If this person is currently unattached then they definitely prefer the proposed person
 			return true;
 		return sortedPrefs.indexOf(person) < sortedPrefs.indexOf(currentFiance);
@@ -128,8 +117,34 @@ public class Person {
 		currentFiance = person;
 	}
 
-	public void resetPairingAndPrefPos() {
-		pairWith(null); //This removed any current pairing
-		sortedPrefIndex = 0;
+	@Override
+	public Iterator<Person> iterator() {
+		return new PersonIterator(this);
+	}
+
+	private static final class PersonIterator implements Iterator<Person> {
+		private final Person person;
+		private int prefIndex;
+
+		PersonIterator(Person person) {
+			this.person = person;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return prefIndex < person.sortedPrefs.size() - 1;
+		}
+
+		@Override
+		public Person next() {
+			if (hasNext())
+				return person.sortedPrefs.get(prefIndex++);
+			throw new NoSuchElementException();
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
 	}
 }
