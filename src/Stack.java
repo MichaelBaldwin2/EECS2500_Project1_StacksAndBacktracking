@@ -12,12 +12,19 @@ public class Stack<T> {
 	}
 
 	public T pop() {
+		T obj = peek();
+		data.remove(data.size() - 1);
+		return obj;
+	}
+
+	public T peek() {
 		if (isEmpty())
 			return null;
-		int lastIndex = data.size() - 1;
-		T obj = data.get(lastIndex);
-		data.remove(lastIndex);
-		return obj;
+		return data.get(data.size() - 1);
+	}
+
+	public T top() {
+		return peek();
 	}
 
 	public int size() {

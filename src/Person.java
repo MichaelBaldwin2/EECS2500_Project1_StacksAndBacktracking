@@ -117,6 +117,10 @@ public class Person implements Iterable<Person> {
 		currentFiance = person;
 	}
 
+	public void backtrackToPrev() {
+
+	}
+
 	@Override
 	public Iterator<Person> iterator() {
 		return new PersonIterator(this);
