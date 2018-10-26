@@ -5,16 +5,14 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * The Person class represents a single marry-able person.
  * It contains their name, preference values based upon the index locations of possible spouses,
  * and some helper functionality.
  */
-public class Person implements Iterable<Person> {
+public class Person {
 	/**
 	 * The name of this person.
 	 */
@@ -31,11 +29,6 @@ public class Person implements Iterable<Person> {
 	 * The person this person is currently paired with.
 	 */
 	private Person currentFiance;
-	/**
-	 * The iterator that will loop over this person's preferences.
-	 * We need this as an instance variable so that we can save positioning information for backtracking.
-	 */
-	private PersonIterator iterator;
 
 	/**
 	 * Create a new person from the test data file.
@@ -90,6 +83,10 @@ public class Person implements Iterable<Person> {
 		return currentFiance;
 	}
 
+	public List<Person> getSortedPrefs() {
+		return sortedPrefs;
+	}
+
 	/**
 	 * Is this person currently paired.
 	 *
@@ -97,6 +94,15 @@ public class Person implements Iterable<Person> {
 	 */
 	public boolean isPaired() {
 		return currentFiance != null;
+	}
+
+	/**
+	 * Gets a preference in the sorted preference list at the specified index.
+	 * @param i The index to retrieve.
+	 * @return The preference at the index.
+	 */
+	public Person getPrefAtIndex(int i) {
+		return sortedPrefs.get(i);
 	}
 
 	/**
@@ -127,42 +133,5 @@ public class Person implements Iterable<Person> {
 	 */
 	public void unpair() {
 		pairWith(null);
-	}
-
-	public void backtrackToPrev() {
-		iterator = null;
-	}
-
-	@Override
-	public Iterator<Person> iterator() {
-		if (iterator == null)
-			iterator = new PersonIterator(this);
-		return iterator;
-	}
-
-	private static final class PersonIterator implements Iterator<Person> {
-		private final Person person;
-		private int prefIndex;
-
-		PersonIterator(Person person) {
-			this.person = person;
-		}
-
-		@Override
-		public boolean hasNext() {
-			return prefIndex < person.sortedPrefs.size() - 1;
-		}
-
-		@Override
-		public Person next() {
-			if (hasNext())
-				return person.sortedPrefs.get(prefIndex++);
-			throw new NoSuchElementException();
-		}
-
-		@Override
-		public void remove() {
-			throw new UnsupportedOperationException();
-		}
 	}
 }

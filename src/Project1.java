@@ -21,6 +21,10 @@ public class Project1 {
 	 */
 	private static boolean useBackTracking = true;
 	/**
+	 * The size of each group.
+	 */
+	private static int groupSize;
+	/**
 	 * The first group of people that are to paired to the second group.
 	 */
 	private static List<Person> groupA = new ArrayList<>();
@@ -43,7 +47,7 @@ public class Project1 {
 	public static void main(String[] args) {
 		//First we load the file into a BufferedReader, grab the size of the groups, and load up each person.
 		try (BufferedReader reader = Files.newBufferedReader(Paths.get(testDataFilePath))) {
-			int groupSize = Integer.parseInt(reader.readLine());
+			groupSize = Integer.parseInt(reader.readLine());
 			for (int j = 0; j < groupSize; j++)
 				groupA.add(new Person(reader, groupSize));
 			for (int j = 0; j < groupSize; j++)
@@ -63,19 +67,29 @@ public class Project1 {
 		if (useBackTracking) {
 			//First thing we do is push the first pairing of (a0, b0)
 			pairings.push(new Pairing(groupA.get(0), groupB.get(0))); //The stack now has only one pairing in it
-			for (Person iPref : pairings.top().personA) {
-				Person topPerson = pairings.top().personA;
-				if (topPerson.preferresThisOverCurrent(iPref) && iPref.preferresThisOverCurrent(topPerson)) {
-					if (topPerson.isPaired() && !iPref.isPaired()) {
-						topPerson.unpair();
-						pairings.pop();
-						pairings.push(new Pairing(topPerson, iPref));
-					} else if (!pairings.top().personA.isPaired() && !iPref.isPaired()) {
-						pairings.push(new Pairing(pairings.top().personA, iPref));
-					} else {// iPref is paired, so we need to backtrack regardless of iPerson's state
-						topPerson.unpair();
-						topPerson.backtrackToPrev();
-						pairings.pop();
+
+			for (int i = 0; i < groupSize; i++) { //Loop through each person
+				Person iPerson = groupA.get(i);
+				for (int j = 0; j < groupSize; j++) { //Loop through each preference of currently looping person
+					Person iPref = iPerson.getPrefAtIndex(j);
+					if (iPerson.preferresThisOverCurrent(iPref) && iPref.preferresThisOverCurrent(iPerson)) {
+						if (!iPerson.isPaired() && !iPref.isPaired()) {
+							pairings.push(new Pairing(iPerson, iPref));
+						} else if (iPerson.isPaired() && !iPref.isPaired()) { //The person is probably on the top of the stack, so pop and push new pair
+							iPerson.unpair();
+							pairings.pop();
+							pairings.push(new Pairing(iPerson, iPref));
+						} else if (iPerson.isPaired() && iPref.isPaired()) { //Both are paired, so unpair both, pop, backtrack, and break
+							iPerson.unpair();
+							iPref.unpair();
+							pairings.pop();
+							i--;
+							break;
+						} else if (!iPerson.isPaired() && iPref.isPaired()) {
+							pairings.pop();
+							i--;
+							break;
+						}
 					}
 				}
 			}
@@ -85,7 +99,7 @@ public class Project1 {
 		} else {
 			while (!areMarriagesStable()) {
 				for (Person iPerson : groupA) {
-					for (Person iPref : iPerson) {
+					for (Person iPref : iPerson.getSortedPrefs()) {
 						if (!iPerson.isPaired()) {
 							if (iPref.preferresThisOverCurrent(iPerson)) {
 								iPref.pairWith(iPerson);
