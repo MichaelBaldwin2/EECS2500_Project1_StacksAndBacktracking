@@ -31,6 +31,11 @@ public class Person implements Iterable<Person> {
 	 * The person this person is currently paired with.
 	 */
 	private Person currentFiance;
+	/**
+	 * The iterator that will loop over this person's preferences.
+	 * We need this as an instance variable so that we can save positioning information for backtracking.
+	 */
+	private PersonIterator iterator;
 
 	/**
 	 * Create a new person from the test data file.
@@ -117,13 +122,22 @@ public class Person implements Iterable<Person> {
 		currentFiance = person;
 	}
 
-	public void backtrackToPrev() {
+	/**
+	 * Unpairs this person. Same thing as just calling pairWith(null).
+	 */
+	public void unpair() {
+		pairWith(null);
+	}
 
+	public void backtrackToPrev() {
+		iterator = null;
 	}
 
 	@Override
 	public Iterator<Person> iterator() {
-		return new PersonIterator(this);
+		if (iterator == null)
+			iterator = new PersonIterator(this);
+		return iterator;
 	}
 
 	private static final class PersonIterator implements Iterator<Person> {

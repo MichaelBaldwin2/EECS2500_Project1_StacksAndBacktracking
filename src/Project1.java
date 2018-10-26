@@ -19,11 +19,7 @@ public class Project1 {
 	 * Should the code run the Gale-Shapely Algorithm, or the BackTracking solution?
 	 * They might present different stable pairs, if two exist.
 	 */
-	private static boolean useBackTracking = false;
-	/**
-	 * The size of a single group.
-	 */
-	private static int groupSize;
+	private static boolean useBackTracking = true;
 	/**
 	 * The first group of people that are to paired to the second group.
 	 */
@@ -71,21 +67,21 @@ public class Project1 {
 				Person topPerson = pairings.top().personA;
 				if (topPerson.preferresThisOverCurrent(iPref) && iPref.preferresThisOverCurrent(topPerson)) {
 					if (topPerson.isPaired() && !iPref.isPaired()) {
-						topPerson.pairWith(null); //UnPair
+						topPerson.unpair();
 						pairings.pop();
 						pairings.push(new Pairing(topPerson, iPref));
-						continue;
-					}
-					if (!topPerson.isPaired() && !iPref.isPaired()) {
-						pairings.push(new Pairing(topPerson, iPref));
-						continue;
+					} else if (!pairings.top().personA.isPaired() && !iPref.isPaired()) {
+						pairings.push(new Pairing(pairings.top().personA, iPref));
 					} else {// iPref is paired, so we need to backtrack regardless of iPerson's state
-						topPerson.getCurrentFiance().pairWith(null); //UnPair
-						topPerson.pairWith(null); //UnPair
-
+						topPerson.unpair();
+						topPerson.backtrackToPrev();
+						pairings.pop();
 					}
 				}
 			}
+
+			for (Pairing iPair : pairings.getRawData())
+				System.out.println(iPair.personA.getName() + " - " + iPair.personB.getName());
 		} else {
 			while (!areMarriagesStable()) {
 				for (Person iPerson : groupA) {
