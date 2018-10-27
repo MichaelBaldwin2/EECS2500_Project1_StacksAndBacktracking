@@ -29,6 +29,10 @@ public class Person {
 	 * The person this person is currently paired with.
 	 */
 	private Person currentFiance;
+	/**
+	 * The index count of the sorted preferences, used for backtracking.
+	 */
+	private int prefIndex;
 
 	/**
 	 * Create a new person from the test data file.
@@ -87,6 +91,12 @@ public class Person {
 		return sortedPrefs;
 	}
 
+	public Person getNextPref() {
+		if(prefIndex < 0 || prefIndex > sortedPrefs.size() - 1)
+			return null;
+		return sortedPrefs.get(prefIndex++);
+	}
+
 	/**
 	 * Is this person currently paired.
 	 *
@@ -97,21 +107,12 @@ public class Person {
 	}
 
 	/**
-	 * Gets a preference in the sorted preference list at the specified index.
-	 * @param i The index to retrieve.
-	 * @return The preference at the index.
-	 */
-	public Person getPrefAtIndex(int i) {
-		return sortedPrefs.get(i);
-	}
-
-	/**
 	 * Checks if the supplied Person is a preferred match over their current partner (if there is one).
 	 *
 	 * @param person The person to check against.
 	 * @return True if this new person is a better match, or false otherwise.
 	 */
-	public boolean preferresThisOverCurrent(Person person) {
+	public boolean preferOverCurrent(Person person) {
 		if (!isPaired()) //If this person is currently unattached then they definitely prefer the proposed person
 			return true;
 		return sortedPrefs.indexOf(person) < sortedPrefs.indexOf(currentFiance);
@@ -128,10 +129,12 @@ public class Person {
 		currentFiance = person;
 	}
 
-	/**
-	 * Unpairs this person. Same thing as just calling pairWith(null).
-	 */
-	public void unpair() {
-		pairWith(null);
+	public void resetPrefIndex() {
+		prefIndex = 0;
+	}
+
+	@Override
+	public String toString() {
+		return getName() + " - " + (isPaired() ? currentFiance.getName() : "null");
 	}
 }

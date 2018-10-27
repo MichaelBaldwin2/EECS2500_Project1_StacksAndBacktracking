@@ -66,30 +66,23 @@ public class Project1 {
 		//Now on to the actual algorithm(s)
 		if (useBackTracking) {
 			//First thing we do is push the first pairing of (a0, b0)
-			pairings.push(new Pairing(groupA.get(0), groupB.get(0))); //The stack now has only one pairing in it
+			//pairings.push(new Pairing(groupA.get(0), groupB.get(0))); //The stack now has only one pairing in it
 
-			for (int i = 0; i < groupSize; i++) { //Loop through each person
+			for (int i = 0; i < groupSize; i++) {
 				Person iPerson = groupA.get(i);
-				for (int j = 0; j < groupSize; j++) { //Loop through each preference of currently looping person
-					Person iPref = iPerson.getPrefAtIndex(j);
-					if (iPerson.preferresThisOverCurrent(iPref) && iPref.preferresThisOverCurrent(iPerson)) {
-						if (!iPerson.isPaired() && !iPref.isPaired()) {
-							pairings.push(new Pairing(iPerson, iPref));
-						} else if (iPerson.isPaired() && !iPref.isPaired()) { //The person is probably on the top of the stack, so pop and push new pair
-							iPerson.unpair();
-							pairings.pop();
-							pairings.push(new Pairing(iPerson, iPref));
-						} else if (iPerson.isPaired() && iPref.isPaired()) { //Both are paired, so unpair both, pop, backtrack, and break
-							iPerson.unpair();
-							iPref.unpair();
-							pairings.pop();
-							i--;
-							break;
-						} else if (!iPerson.isPaired() && iPref.isPaired()) {
-							pairings.pop();
-							i--;
-							break;
-						}
+				while (!iPerson.isPaired()) {
+					Person iPref = iPerson.getNextPref();
+					if (!iPerson.preferOverCurrent(iPref) || !iPref.preferOverCurrent(iPerson))
+						continue;
+					if (!iPref.isPaired())
+						pairings.push(new Pairing(iPerson, iPref));
+					else {
+						iPerson.pairWith(null);
+						iPref.pairWith(null);
+						iPerson.resetPrefIndex();
+						pairings.pop();
+						i -= 2;
+						break;
 					}
 				}
 			}
@@ -101,7 +94,7 @@ public class Project1 {
 				for (Person iPerson : groupA) {
 					for (Person iPref : iPerson.getSortedPrefs()) {
 						if (!iPerson.isPaired()) {
-							if (iPref.preferresThisOverCurrent(iPerson)) {
+							if (iPref.preferOverCurrent(iPerson)) {
 								iPref.pairWith(iPerson);
 								iPerson.pairWith(iPref);
 							}
