@@ -65,9 +65,6 @@ public class Project1 {
 
 		//Now on to the actual algorithm(s)
 		if (useBackTracking) {
-			//First thing we do is push the first pairing of (a0, b0)
-			//pairings.push(new Pairing(groupA.get(0), groupB.get(0))); //The stack now has only one pairing in it
-
 			for (int i = 0; i < groupSize; i++) {
 				Person iPerson = groupA.get(i);
 				while (!iPerson.isPaired()) {
@@ -78,15 +75,14 @@ public class Project1 {
 						pairings.push(new Pairing(iPerson, iPref));
 					else {
 						iPerson.pairWith(null);
-						iPref.pairWith(null);
 						iPerson.resetPrefIndex();
+						pairings.top().personA.pairWith(null);
 						pairings.pop();
 						i -= 2;
 						break;
 					}
 				}
 			}
-
 			for (Pairing iPair : pairings.getRawData())
 				System.out.println(iPair.personA.getName() + " - " + iPair.personB.getName());
 		} else {

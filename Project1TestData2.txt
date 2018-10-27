@@ -1,0 +1,17 @@
+4
+Bobbie
+0	1	2	3
+Ted
+2	0	1	3
+Gina
+3	2	1	0
+Harry
+0	2	1	3
+Mel
+3	2	1	0
+Barb
+2	1	3	0
+Olive
+2	3	1	0
+Sam
+2	0	1	3
