@@ -1,3 +1,7 @@
+/*
+  Written by: Michael Baldwin
+ */
+
 public class Pairing {
 	public Person personA, personB;
 
